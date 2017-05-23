@@ -15,7 +15,7 @@ namespace UntisConnector {
     /// 
     [Microsoft.VisualStudio.Tools.Applications.Runtime.StartupObjectAttribute(0)]
     [global::System.Security.Permissions.PermissionSetAttribute(global::System.Security.Permissions.SecurityAction.Demand, Name="FullTrust")]
-    public sealed partial class ThisAddIn : Microsoft.Office.Tools.Outlook.OutlookAddInBase {
+    public sealed partial class UntisConnector : Microsoft.Office.Tools.Outlook.OutlookAddInBase {
         
         internal Microsoft.Office.Tools.CustomTaskPaneCollection CustomTaskPanes;
         
@@ -28,7 +28,7 @@ namespace UntisConnector {
         /// 
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Never)]
-        public ThisAddIn(global::Microsoft.Office.Tools.Outlook.Factory factory, global::System.IServiceProvider serviceProvider) : 
+        public UntisConnector(global::Microsoft.Office.Tools.Outlook.Factory factory, global::System.IServiceProvider serviceProvider) : 
                 base(factory, serviceProvider, "AddIn", "ThisAddIn") {
             Globals.Factory = factory;
         }
@@ -40,7 +40,7 @@ namespace UntisConnector {
         protected override void Initialize() {
             base.Initialize();
             this.Application = this.GetHostItem<Microsoft.Office.Interop.Outlook.Application>(typeof(Microsoft.Office.Interop.Outlook.Application), "Application");
-            Globals.ThisAddIn = this;
+            Globals.UntisConnector = this;
             global::System.Windows.Forms.Application.EnableVisualStyles();
             this.InitializeCachedData();
             this.InitializeControls();
@@ -174,21 +174,21 @@ namespace UntisConnector {
         private Globals() {
         }
         
-        private static ThisAddIn _ThisAddIn;
+        private static UntisConnector _UntisConnector;
         
         private static global::Microsoft.Office.Tools.Outlook.Factory _factory;
         
         private static ThisRibbonCollection _ThisRibbonCollection;
-
+        
         private static ThisFormRegionCollection _ThisFormRegionCollection;
         
-        internal static ThisAddIn ThisAddIn {
+        internal static UntisConnector UntisConnector {
             get {
-                return _ThisAddIn;
+                return _UntisConnector;
             }
             set {
-                if ((_ThisAddIn == null)) {
-                    _ThisAddIn = value;
+                if ((_UntisConnector == null)) {
+                    _UntisConnector = value;
                 }
                 else {
                     throw new System.NotSupportedException();
@@ -222,7 +222,7 @@ namespace UntisConnector {
         internal static ThisFormRegionCollection FormRegions {
             get {
                 if ((_ThisFormRegionCollection == null)) {
-                    _ThisFormRegionCollection = new ThisFormRegionCollection(Globals.ThisAddIn.GetFormRegions());
+                    _ThisFormRegionCollection = new ThisFormRegionCollection(Globals.UntisConnector.GetFormRegions());
                 }
                 return _ThisFormRegionCollection;
             }
@@ -263,13 +263,13 @@ namespace UntisConnector {
         
         internal WindowFormRegionCollection this[Microsoft.Office.Interop.Outlook.Explorer explorer] {
             get {
-                return ((WindowFormRegionCollection)(Globals.ThisAddIn.GetFormRegions(explorer, typeof(WindowFormRegionCollection))));
+                return ((WindowFormRegionCollection)(Globals.UntisConnector.GetFormRegions(explorer, typeof(WindowFormRegionCollection))));
             }
         }
         
         internal WindowFormRegionCollection this[Microsoft.Office.Interop.Outlook.Inspector inspector] {
             get {
-                return ((WindowFormRegionCollection)(Globals.ThisAddIn.GetFormRegions(inspector, typeof(WindowFormRegionCollection))));
+                return ((WindowFormRegionCollection)(Globals.UntisConnector.GetFormRegions(inspector, typeof(WindowFormRegionCollection))));
             }
         }
     }
