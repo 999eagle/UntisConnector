@@ -162,6 +162,8 @@ namespace UntisLibrary
 					{ "numOfDays", numOfDays }
 				}
 			});
+			var responseData = response.ToObject<GetTimetable2017Result>();
+			MergeMasterData(responseData.MasterData);
 		}
 	}
 }
