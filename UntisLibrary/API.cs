@@ -16,6 +16,13 @@ namespace UntisLibrary
 		HttpClient http;
 		readonly string server;
 		readonly string schoolname;
+		string username = null;
+		string key = null;
+
+		public MasterData MasterData { get; private set; }
+		public long MasterDataTimestamp { get => MasterData?.TimeStamp ?? 0; }
+
+		public bool IsAuthenticated { get => username != null && key != null; }
 
 		static ushort requestCounter = 0;
 		static string GenerateRequestID() => $"req-{(requestCounter > 999 ? (requestCounter = 0) : requestCounter++):D3}";
@@ -33,6 +40,50 @@ namespace UntisLibrary
 				CookieContainer = cookies
 			};
 			http = new HttpClient(handler);
+		}
+
+		/// <summary>
+		/// Sets username and password for authentication. If the specified credentials are invalid, an <see cref="ApiException"/> is thrown.
+		/// </summary>
+		/// <param name="username">The username to authenticate as.</param>
+		/// <param name="password">The password to authenticate with.</param>
+		public async Task SetAuthenticationData(string username, string password)
+		{
+			var key = await GetAppSharedSecret(username, password);
+			this.username = username;
+			this.key = key;
+		}
+
+		public async Task SetAnonymousAuthentication()
+		{
+			await SetAuthenticationData("#anonymous#", "");
+		}
+
+		private async Task<string> GetAppSharedSecret(string username, string password)
+		{
+			var response = await DoApiCall("jsonrpc_intern.do", "getAppSharedSecret", new JArray
+			{
+				new JObject
+				{
+					{ "userName", username },
+					{ "password", password },
+				}
+			}, new Dictionary<string, string> { { "school", schoolname } });
+
+			return response.Value<string>();
+		}
+
+		private JObject GetAuthenticationObject()
+		{
+			long timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+			string otp = $"{Helper.CalcOTP(key, timestamp / 1000):D6}";
+			return new JObject
+			{
+				{ "user", username },
+				{ "otp", otp },
+				{ "clientTime", $"{timestamp}" },
+			};
 		}
 
 		private async Task<JToken> DoApiCall(string endpoint, string method, JToken methodParameters, IDictionary<string, string> urlParameters = null)
@@ -73,48 +124,44 @@ namespace UntisLibrary
 			return obj["result"];
 		}
 
-		public async Task<bool> AuthenticateOTP(string user, string key)
+		private void MergeMasterData(MasterData newData)
 		{
-			long timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-			
-			string otp = $"{Helper.CalcOTP(key, timestamp / 1000):D6}";
+			if (MasterData == null)
+			{
+				MasterData = newData;
+				return;
+			}
+		}
 
+		public async Task<UserData> GetUserData2017()
+		{
 			var response = await DoApiCall("jsonrpc_intern.do", "getUserData2017", new JArray
 			{
 				new JObject
 				{
-					{ "masterDataTimestamp", 0 },
-					{ "auth", new JObject
-					{
-						{ "user", user },
-						{ "otp", otp },
-						{ "clientTime", $"{timestamp}" },
-					} },
+					{ "masterDataTimestamp", MasterDataTimestamp },
+					{ "auth", GetAuthenticationObject() },
 				}
-			}, new Dictionary<string, string> { { "school", schoolname } });
+			});
 			var responseData = response.ToObject<GetUserData2017Result>();
-
-			return true;
+			MergeMasterData(responseData.MasterData);
+			return responseData.UserData;
 		}
 
-		public async Task<bool> AuthenticateAnonymous()
+		public async Task GetTimetable2017(uint id, uint type, DateTime startDate, uint numOfDays)
 		{
-			var secret = await GetAppSharedSecret("#anonymous#", "");
-			return await AuthenticateOTP("#anonymous#", secret);
-		}
-
-		private async Task<string> GetAppSharedSecret(string username, string password)
-		{
-			var response = await DoApiCall("jsonrpc_intern.do", "getAppSharedSecret", new JArray
+			var response = await DoApiCall("jsonrpc_mobile.do", "getTimetable2017", new JArray
 			{
 				new JObject
 				{
-					{ "userName", username },
-					{ "password", password },
+					{ "masterDataTimestamp", MasterDataTimestamp },
+					{ "auth", GetAuthenticationObject() },
+					{ "id", id },
+					{ "type", type },
+					{ "startDate", startDate.ToString("yyyy-MM-dd") },
+					{ "numOfDays", numOfDays }
 				}
-			}, new Dictionary<string, string> { { "school", schoolname } });
-
-			return response.Value<string>();
+			});
 		}
 	}
 }
