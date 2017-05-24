@@ -213,5 +213,20 @@ namespace UntisLibrary
 			MergeMasterData(responseData.MasterData);
 			return (responseData.TimetableData, responseData.TimetableFormat);
 		}
+
+		public Task<MessageOfDayCollection> GetMessagesOfDay() => GetMessagesOfDay(DateTime.Today);
+		public async Task<MessageOfDayCollection> GetMessagesOfDay(DateTime date)
+		{
+			var response = await DoApiCall("jsonrpc_intern.do", "getMessagesOfDay", new JArray
+			{
+				new JObject
+				{
+					{ "auth", GetAuthenticationObject() },
+					{ "date", date.Year * 10000 + date.Month * 100 + date.Day }
+				}
+			});
+			var responseData = response.ToObject<GetMessagesOfDayResult>();
+			return responseData.Messages;
+		}
 	}
 }
