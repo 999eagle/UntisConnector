@@ -25,4 +25,13 @@ namespace UntisLibrary.Models
 		SHIFT,
 		CANCEL
 	}
+
+	public enum DataObjectType : uint
+	{
+		Class = 1,
+		Teacher = 2,
+		Subject = 3,
+		Room = 4,
+		Student = 5
+	}
 }

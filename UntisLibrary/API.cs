@@ -195,6 +195,12 @@ namespace UntisLibrary
 			return responseData.UserData;
 		}
 
+		public Task<(TimetableData timetableData, TimetableFormat timetableFormat)> GetTimetable2017(Class cls, DateTime startDate, uint numOfDays) => GetTimetable2017(cls.ID, DataObjectType.Class, startDate, numOfDays);
+		public Task<(TimetableData timetableData, TimetableFormat timetableFormat)> GetTimetable2017(Room room, DateTime startDate, uint numOfDays) => GetTimetable2017(room.ID, DataObjectType.Room, startDate, numOfDays);
+		//public Task<(TimetableData timetableData, TimetableFormat timetableFormat)> GetTimetable2017(Student student, DateTime startDate, uint numOfDays) => GetTimetable2017(student.ID, DataObjectType.Student, startDate, numOfDays);
+		public Task<(TimetableData timetableData, TimetableFormat timetableFormat)> GetTimetable2017(Subject subject, DateTime startDate, uint numOfDays) => GetTimetable2017(subject.ID, DataObjectType.Subject, startDate, numOfDays);
+		public Task<(TimetableData timetableData, TimetableFormat timetableFormat)> GetTimetable2017(Teacher teacher, DateTime startDate, uint numOfDays) => GetTimetable2017(teacher.ID, DataObjectType.Teacher, startDate, numOfDays);
+		public Task<(TimetableData timetableData, TimetableFormat timetableFormat)> GetTimetable2017(uint id, DataObjectType type, DateTime startDate, uint numOfDays) => GetTimetable2017(id, (uint)type, startDate, numOfDays);
 		public async Task<(TimetableData timetableData, TimetableFormat timetableFormat)> GetTimetable2017(uint id, uint type, DateTime startDate, uint numOfDays)
 		{
 			var response = await DoApiCall("jsonrpc_mobile.do", "getTimetable2017", new JArray
