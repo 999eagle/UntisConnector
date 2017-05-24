@@ -58,8 +58,18 @@ namespace UntisLibrary
 			var response = await http.SendAsync(reqMessage);
 
 			var obj = JObject.Parse(await response.Content.ReadAsStringAsync());
-			if (obj["jsonrpc"].Value<string>() != JsonRpcVersion) { throw new ApiException($"Invalid JsonRPC version returned by server (got: \"{obj["jsonrpc"]}\" expected: \"{JsonRpcVersion}\")."); }
-			if (obj["id"].Value<string>() != requestID) { throw new ApiException($"Invalid response ID returned by server (got: \"{obj["id"]}\" expected: \"{requestID}\")."); }
+			if (obj["jsonrpc"].Value<string>() != JsonRpcVersion)
+			{
+				throw new JsonRpcException($"Invalid JsonRPC version returned by server (got: \"{obj["jsonrpc"]}\" expected: \"{JsonRpcVersion}\").");
+			}
+			if (obj["id"].Value<string>() != requestID)
+			{
+				throw new JsonRpcException($"Invalid response ID returned by server (got: \"{obj["id"]}\" expected: \"{requestID}\").");
+			}
+			if (obj["error"] is JObject error)
+			{
+				throw new ApiException(error.Value<string>("message"), error.Value<int>("code"), url, requestObject);
+			}
 			return obj["result"];
 		}
 
