@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
+using UntisLibrary.Converters;
+
 namespace UntisLibrary.Models
 {
 	public class PeriodFormatElement
@@ -17,8 +19,12 @@ namespace UntisLibrary.Models
 		public uint Row { get; set; }
 		[JsonProperty(PropertyName = "labelPattern")]
 		public string LabelPattern { get; set; }
-		// foreColor: color
-		// backColor: color
+		[JsonProperty(PropertyName = "foreColor")]
+		[JsonConverter(typeof(ColorConverter))]
+		public Color ForegroundColor { get; set; }
+		[JsonProperty(PropertyName = "backColor")]
+		[JsonConverter(typeof(ColorConverter))]
+		public Color BackgroundColor { get; set; }
 		[JsonProperty(PropertyName = "type")]
 		public ElementType Type { get; set; }
 		[JsonProperty(PropertyName = "separator")]

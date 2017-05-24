@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
+using UntisLibrary.Converters;
+
 namespace UntisLibrary.Models
 {
 	public class Subject
@@ -15,8 +17,12 @@ namespace UntisLibrary.Models
 		public string LongName { get; set; }
 		[JsonProperty(PropertyName = "departmentIds")]
 		public uint[] DepartmentIDs { get; set; }
-		// foreColor color
-		// backColor color
+		[JsonProperty(PropertyName = "foreColor")]
+		[JsonConverter(typeof(ColorConverter))]
+		public Color ForegroundColor { get; set; }
+		[JsonProperty(PropertyName = "backColor")]
+		[JsonConverter(typeof(ColorConverter))]
+		public Color BackgroundColor { get; set; }
 		[JsonProperty(PropertyName = "active")]
 		public bool Active { get; set; }
 		[JsonProperty(PropertyName = "displayAllowed")]
