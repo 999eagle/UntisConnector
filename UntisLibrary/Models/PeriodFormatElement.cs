@@ -20,7 +20,7 @@ namespace UntisLibrary.Models
 		// foreColor: color
 		// backColor: color
 		[JsonProperty(PropertyName = "type")]
-		public uint Type { get; set; }
+		public ElementType Type { get; set; }
 		[JsonProperty(PropertyName = "separator")]
 		public string Separator { get; set; }
 	}

@@ -7,8 +7,10 @@ namespace UntisLibrary.Models
 {
 	public class UserData
 	{
-		// elemType null
-		// elemId -1
+		[JsonProperty(PropertyName = "elemType")]
+		public ElementType? ElementType { get; set; }
+		[JsonProperty(PropertyName = "elemId")]
+		public int ElementId { get; set; }
 		[JsonProperty(PropertyName = "displayName")]
 		public string DisplayName { get; set; }
 		[JsonProperty(PropertyName = "schoolName")]

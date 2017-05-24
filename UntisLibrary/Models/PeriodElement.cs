@@ -9,9 +9,9 @@ namespace UntisLibrary.Models
 	public class PeriodElement
 	{
 		[JsonProperty(PropertyName = "type")]
-		public uint Type { get; set; }
+		public ElementType ElementType { get; set; }
 		[JsonProperty(PropertyName = "id")]
-		public uint Id { get; set; }
+		public uint ElementId { get; set; }
 		[JsonProperty(PropertyName = "orgId")]
 		public uint OrgId { get; set; }
 		[JsonProperty(PropertyName = "missing")]

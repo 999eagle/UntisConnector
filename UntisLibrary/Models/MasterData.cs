@@ -9,10 +9,12 @@ namespace UntisLibrary.Models
 	{
 		[JsonProperty(PropertyName = "timeStamp")]
 		public long TimeStamp { get; set; }
-		// absenceReasons []
+		[JsonProperty(PropertyName = "absenceReasons")]
+		public AbsenceReason[] AbsenceReasons { get; set; }
 		[JsonProperty(PropertyName = "departments")]
 		public Department[] Departments { get; set; }
-		// eventReasons []
+		[JsonProperty(PropertyName = "eventReasons")]
+		public EventReason[] EventReasons { get; set; }
 		// eventReasonGroups []
 		[JsonProperty(PropertyName = "holidays")]
 		public Holiday[] Holidays { get; set; }

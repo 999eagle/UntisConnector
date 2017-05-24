@@ -31,7 +31,7 @@ namespace UntisLibrary.Models
 		public uint MinHeight { get; set; }
 		[JsonProperty(PropertyName = "minWidth")]
 		public uint MinWidth { get; set; }
-		[JsonProperty(PropertyName = "elemets")]
+		[JsonProperty(PropertyName = "elements")]
 		public PeriodFormatElement[] Elements { get; set; }
 
 		public class Position
