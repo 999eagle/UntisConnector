@@ -195,7 +195,7 @@ namespace UntisLibrary
 			return responseData.UserData;
 		}
 
-		public async Task GetTimetable2017(uint id, uint type, DateTime startDate, uint numOfDays)
+		public async Task<(TimetableData timetableData, TimetableFormat timetableFormat)> GetTimetable2017(uint id, uint type, DateTime startDate, uint numOfDays)
 		{
 			var response = await DoApiCall("jsonrpc_mobile.do", "getTimetable2017", new JArray
 			{
@@ -211,6 +211,7 @@ namespace UntisLibrary
 			});
 			var responseData = response.ToObject<GetTimetable2017Result>();
 			MergeMasterData(responseData.MasterData);
+			return (responseData.TimetableData, responseData.TimetableFormat);
 		}
 	}
 }
