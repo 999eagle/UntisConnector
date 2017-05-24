@@ -124,12 +124,59 @@ namespace UntisLibrary
 			return obj["result"];
 		}
 
+		private T[] ArrayMergeHelper<T>(T[] existingData, T[] newData, Func<T, T, bool> equalityPredicate, Func<T, T, T> mergeElement = null)
+		{
+			if (newData.Any())
+			{
+				var list = existingData.ToList();
+				foreach (var newElement in newData)
+				{
+					var existing = list.Where((e => equalityPredicate(e, newElement))).FirstOrDefault();
+					if (existing != null)
+					{
+						var idx = list.IndexOf(existing);
+						if (mergeElement == null)
+						{
+							list[idx] = newElement;
+						}
+						else
+						{
+							list[idx] = mergeElement(existing, newElement);
+						}
+					}
+					else
+					{
+						list.Add(newElement);
+					}
+				}
+				return list.ToArray();
+			}
+			return existingData;
+		}
+
 		private void MergeMasterData(MasterData newData)
 		{
 			if (MasterData == null)
 			{
 				MasterData = newData;
 				return;
+			}
+			if (newData.TimeStamp < MasterData.TimeStamp) return;
+
+			MasterData.Classes = ArrayMergeHelper(MasterData.Classes, newData.Classes, ((c1, c2) => c1.ID == c2.ID));
+			MasterData.Departments = ArrayMergeHelper(MasterData.Departments, newData.Departments, ((c1, c2) => c1.ID == c2.ID));
+			MasterData.Holidays = ArrayMergeHelper(MasterData.Holidays, newData.Holidays, ((c1, c2) => c1.ID == c2.ID));
+			MasterData.Rooms = ArrayMergeHelper(MasterData.Rooms, newData.Rooms, ((c1, c2) => c1.ID == c2.ID));
+			MasterData.Subjects = ArrayMergeHelper(MasterData.Subjects, newData.Subjects, ((c1, c2) => c1.ID == c2.ID));
+			MasterData.Teachers = ArrayMergeHelper(MasterData.Teachers, newData.Teachers, ((c1, c2) => c1.ID == c2.ID));
+
+			MasterData.TimeGrid.Days = ArrayMergeHelper(MasterData.TimeGrid.Days, newData.TimeGrid.Days, ((d1, d2) => d1.Day == d2.Day), MergeTimeGridDays);
+			MasterData.TimeStamp = newData.TimeStamp;
+
+			TimeGridDay MergeTimeGridDays(TimeGridDay existing, TimeGridDay newDay)
+			{
+				existing.Units = ArrayMergeHelper(existing.Units, newDay.Units, (u1, u2) => u1.StartTime == u2.StartTime && u1.EndTime == u2.EndTime);
+				return existing;
 			}
 		}
 
