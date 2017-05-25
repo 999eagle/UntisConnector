@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -48,5 +49,15 @@ namespace UntisLibrary.Models
 		// is: {standard: true}
 		// rights: ["READ_HOMEWORK"]
 		// can: {requestStudents: false, requestLessonTopic: false, submitLessonTopic: false}
+
+		private T[] GetTs<T>(MasterData masterData, ElementType tType)
+		{
+			return Elements.Where(e => e.ElementType == tType).Select(e => (T)masterData.GetElement(tType, e.ElementId)).ToArray();
+		}
+
+		public Class[] GetClasses(MasterData masterData) => GetTs<Class>(masterData, ElementType.CLASS);
+		public Room[] GetRooms(MasterData masterData) => GetTs<Room>(masterData, ElementType.ROOM);
+		public Subject[] GetSubjects(MasterData masterData) => GetTs<Subject>(masterData, ElementType.SUBJECT);
+		public Teacher[] GetTeachers(MasterData masterData) => GetTs<Teacher>(masterData, ElementType.TEACHER);
 	}
 }
